@@ -1,1 +1,2 @@
-print("git_test")
+def test():
+    print("git_test")
