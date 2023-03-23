@@ -1,0 +1,71 @@
+GET /_search
+
+{
+    "fields" : ["user", "created_at"], 
+
+    "from" : 10,
+    "size" : 5,
+
+    "sort" :[
+        {
+            "writer" : {
+                "order" : "asc"
+            }
+        },
+        { 
+            "created_at" : {
+                "order" : "desc"
+            }
+        },
+        "_score"
+    ], 
+
+    "query" : {
+        "match" : {
+            "title" : {
+                "query" : "메밀차 녹차", 
+                "operator" : "or",
+                "minimum_should_match" : 2,
+                "fuzziness" : "AUTO"
+            }
+        }
+    }
+
+    "query" : {
+        "filtered" : {
+          "filter" : {
+            "bool" : {
+                "must" : [
+                    {
+                        "term" : {
+                            "title" : "간헐적단식"
+                        }
+                    }
+                ], 
+                "should" : [
+                    {
+                        "term" : {
+                            "keyword" : "다이어트"
+                        }
+                    }
+                ],
+                "must_not" : [
+                    {
+                        "term" : {
+                            "keyword" : "실패"
+                        }
+                    }
+                ]
+            }
+          }  
+        }
+    }
+    
+    "highlight" : {
+        "fields" : {
+            "title" : {}
+        },
+        "pre_tags" : ["<em class=\"matched-term\">"],
+        "post_tags" :["</em>"]
+    }
+}
